@@ -1,0 +1,143 @@
+[
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_customer",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_documentHash",
+                "type": "string"
+            }
+        ],
+        "name": "attestDocument",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "attester",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "documentHash",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "isAttested",
+                "type": "bool"
+            }
+        ],
+        "name": "DocumentAttested",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "customer",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "documentHash",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "claim",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "DocumentSubmitted",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_documentHash",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_claim",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "submitDocument",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "documents",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "documentHash",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "claim",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "attestedBy",
+                "type": "address"
+            },
+            {
+                "internalType": "bool",
+                "name": "isAttested",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
+]
