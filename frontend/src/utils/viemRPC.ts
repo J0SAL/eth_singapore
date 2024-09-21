@@ -8,7 +8,12 @@ import {
 } from "viem";
 import { mainnet, polygonAmoy, sepolia, hardhat } from "viem/chains";
 import type { IProvider } from "@web3auth/base";
-import { signabi, contractAddressesSign, abi, contractAddresses } from "../contract_ref";
+import {
+  signabi,
+  contractAddressesSign,
+  abi,
+  contractAddresses,
+} from "../contract_ref";
 
 const getViewChain = (provider: IProvider) => {
   switch (provider.chainId) {
@@ -181,7 +186,7 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
       // @ts-ignore
       account: `${publicAddress[0]}`,
     });
-    console.log(publicAddress);
+    console.log(publicAddress[0]);
     const chainId = await getChainId(provider);
     console.log(1);
     console.log(chainId);
@@ -202,7 +207,11 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
   }
 };
 
-const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAddress: string) => {
+const linkWorldCoinId = async (
+  provider: IProvider,
+  worldCoinId: string,
+  publicAddress: string
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
@@ -220,7 +229,7 @@ const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAd
     const chainId = await getChainId(provider);
     // @ts-ignore
     console.log("contract address: ", contractAddressesSign[chainId]);
-    
+
     let hash = await walletClient.writeContract({
       abi: signabi,
       // @ts-ignore
@@ -228,14 +237,142 @@ const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAd
       functionName: "linkWorldCoinId",
       args: [worldCoinId],
     });
-    console.log(hash)
+    console.log(hash);
     await publicClient.waitForTransactionReceipt({ hash });
-
-  } catch (error){
-    console.log("error: linkWorldCoinId")
-    console.log(error)
+  } catch (error) {
+    console.log("error: linkWorldCoinId");
+    console.log(error);
   }
-}
+};
+
+const createReimbursementRequestByUser = async (
+  provider: IProvider,
+  publicAddress: string,
+  party1address: string,
+  party2address: string,
+  finalpartyaddress: string,
+  reimbursementID: string,
+  ipfshash: string,
+  claimData: string,
+  claimAmount: number
+) => {
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    console.log(publicAddress[0]);
+    const chainId = await getChainId(provider);
+    console.log(1);
+    console.log(chainId);
+    // @ts-ignore
+    console.log(contractAddressesSign[chainId]);
+    console.log("now values - ");
+    console.log(
+      party1address,
+      party2address,
+      finalpartyaddress,
+      reimbursementID,
+      ipfshash,
+      claimData,
+      claimAmount
+    );
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "createReimbursementRequest",
+      args: [
+        party1address,
+        party2address,
+        finalpartyaddress,
+        reimbursementID,
+        ipfshash,
+        claimData,
+        claimAmount,
+      ],
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    return "success";
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getTPAs = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getTPAs",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getHospitals = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let party2addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getHospitals",
+    });
+
+    return party2addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getInsuranceAgencies = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let finalPartyAddresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getInsuranceAgencies",
+    });
+
+    return finalPartyAddresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
 
 const createReimbursementRequest = async (provider: IProvider, tpaPublic :string, insurancePublic: string, hospitalPublic: string, rid: string, publicAddress: string[]) => {
   console.log("public address: ", publicAddress[0]);
@@ -281,6 +418,10 @@ export default {
   signMessage,
   getUnlockTime,
   withdrawMoney,
+  createReimbursementRequestByUser,
+  getTPAs,
+  getHospitals,
+  getInsuranceAgencies,
   linkWorldCoinId,
   createReimbursementRequest,
 };

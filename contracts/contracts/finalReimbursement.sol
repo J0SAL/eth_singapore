@@ -107,7 +107,10 @@ contract MyContract {
         address _tpaPublicAddress,
         address _insurancePublicAddress,
         address _hospitalPublicAddress,
-        string memory _newReimbursementId
+        string memory _newReimbursementId,
+        string memory _documentHash,
+        string memory _claimData,
+        uint256 amount
     ) public returns (bool) {
         // Store the reimbursement details
         reimbursements[_newReimbursementId] = Reimbursement({
@@ -123,6 +126,19 @@ contract MyContract {
 
         reimbursementCounter++;
         reimbursementids.push(_newReimbursementId);
+
+        // submitDocument(_documentHash,_claimData,amount,_newReimbursementId);
+        DocumentSchema memory newDoc = DocumentSchema({
+            reimbursementId: _newReimbursementId,
+            documentHash: _documentHash,
+            claim: _claimData,
+            amount: amount,
+            attestedBy: address(0),
+            isAttested: false
+        });
+
+        documents[msg.sender].push(newDoc);
+        emit DocumentSubmitted(msg.sender, _documentHash, _claimData, amount);
 
         // Emit an event for the new reimbursement request
         emit NewReimbursementRequest(
