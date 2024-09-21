@@ -8,7 +8,7 @@ import {
 } from "viem";
 import { mainnet, polygonAmoy, sepolia, hardhat } from "viem/chains";
 import type { IProvider } from "@web3auth/base";
-import { signabi, contractAddressesSign } from "../contract_ref";
+import { signabi, contractAddressesSign, abi, contractAddresses } from "../contract_ref";
 
 const getViewChain = (provider: IProvider) => {
   switch (provider.chainId) {
@@ -145,9 +145,9 @@ const getUnlockTime = async (provider: IProvider) => {
     });
     const chainId = await getChainId(provider);
     let unlockTime = await publicClient.readContract({
-      signabi: signabi,
+      abi: abi,
       // @ts-ignore
-      address: `${contractAddressesSign[chainId]}`,
+      address: `${contractAddresses[chainId]}`,
       functionName: "unlockTime",
     });
 
@@ -180,17 +180,18 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
       transport: custom(provider),
       // @ts-ignore
       account: `${publicAddress[0]}`,
+      account: `${publicAddress[0]}`,
     });
     console.log(publicAddress[0]);
     const chainId = await getChainId(provider);
     console.log(1);
     console.log(chainId);
     // @ts-ignore
-    console.log(contractAddressesSign[chainId]);
+    console.log(contractAddresses[chainId]);
     let hash = await walletClient.writeContract({
-      signabi: signabi,
+      abi: abi,
       // @ts-ignore
-      address: `${contractAddressesSign[chainId]}`,
+      address: `${contractAddresses[chainId]}`,
       functionName: "withdraw",
     });
     await publicClient.waitForTransactionReceipt({ hash });
@@ -201,6 +202,41 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
     return "error";
   }
 };
+
+const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAddress: string) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+
+    const chainId = await getChainId(provider);
+    // @ts-ignore
+    console.log("contract address: ", contractAddressesSign[chainId]);
+    
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "linkWorldCoinId",
+      args: [worldCoinId],
+    });
+    console.log(hash)
+    await publicClient.waitForTransactionReceipt({ hash });
+
+  } catch (error){
+    console.log("error: linkWorldCoinId")
+    console.log(error)
+  }
+}
 
 const createReimbursementRequestByUser = async (
   provider: IProvider,
@@ -343,4 +379,5 @@ export default {
   getTPAs,
   getHospitals,
   getInsuranceAgencies,
+  linkWorldCoinId,
 };
