@@ -217,7 +217,7 @@ export function AuthProvider({ children }) {
     );
     return reimbDocs;
   };
-  
+
   const linkWorldCoinId = async (worldCoinId) => {
     if (!provider) {
       console.log("provider not initialized yet");
@@ -270,6 +270,37 @@ export function AuthProvider({ children }) {
       reason,
       publicAddress
     );
+  };
+
+  const verifyInsurancePublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyInsurancePublicIp(provider, rid, status, publicAddress);
+  };
+  const verifyHospitalPublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyHospitalPublicIp(provider, rid, status, publicAddress);
+  };
+  const verifyTpaPublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyTpaPublicIp(provider, rid, status, publicAddress);
+  };
+
+  const isFullyVerified = async (rid) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const res = await RPC.isFullyVerified(provider, rid, publicAddress);
+    console.log(res);
   };
 
   return (
