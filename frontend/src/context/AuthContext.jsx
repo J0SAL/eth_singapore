@@ -114,9 +114,14 @@ export function AuthProvider({ children }) {
       getAccounts();
       getBalance();
       getUserInfo();
-      findWorldId();
     }
   }, [loggedIn]);
+
+  useEffect(() => {
+    if (publicAddress?.length > 0) {
+      findWorldId();
+    }
+  }, [publicAddress]);
 
   const login = async () => {
     const web3authProvider = await web3auth.connect();
@@ -248,6 +253,7 @@ export function AuthProvider({ children }) {
       console.log("provider not initialized yet");
       return;
     }
+    console.log("PUBLIC : ", publicAddress)
     await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
   };
 
@@ -338,8 +344,13 @@ export function AuthProvider({ children }) {
   }
 
   const findWorldId = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
     const worldid = await RPC.findWorldId(provider, publicAddress);
-    if (worldid)
+    console.log("world id ", worldid);
+    if (worldid?.length > 0)
       setIsWorldIdVerified(true);
   };
 
@@ -358,6 +369,7 @@ export function AuthProvider({ children }) {
         getBalance,
         // -
         getUnlockTime,
+        findWorldId,
         withdrawMoney,
         createReimbursementRequest,
         getTPAs,

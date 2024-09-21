@@ -1,7 +1,7 @@
 
 import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import { useAuth } from "../../context/AuthContext";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import axios from "axios";
 
 export function WorldCoinWidget() {

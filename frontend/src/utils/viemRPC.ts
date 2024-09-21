@@ -710,8 +710,8 @@ const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
        // @ts-ignore
        account: `${publicAddress[0]}`,
     });
-
-    return worldid;
+    // @ts-ignore
+    return worldid?.length > 1 ? worldid : null;
   } catch (error) {
     console.log("error: findWorldId");
     console.log(error);
