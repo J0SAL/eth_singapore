@@ -257,9 +257,10 @@ const createReimbursementRequestByUser = async (
   ipfshash: string,
   claimData: string,
   claimAmount: number,
-  publicAddress: string[],
+  publicAddress: string[]
 ) => {
   try {
+    console.log("all public addresses - ", publicAddress);
     const publicClient = await createPublicClient({
       chain: getViewChain(provider),
       transport: custom(provider),
@@ -377,7 +378,12 @@ const getInsuranceAgencies = async (provider: IProvider) => {
   }
 };
 
-const verifyInsurancePublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+const verifyInsurancePublicIp = async (
+  provider: IProvider,
+  rid: string,
+  status: boolean,
+  publicAddress: string[]
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
@@ -409,9 +415,14 @@ const verifyInsurancePublicIp = async (provider: IProvider, rid: string, status:
     console.log("error: verifyInsurancePublicIp");
     console.log(error);
   }
-}
+};
 
-const verifyHospitalPublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+const verifyHospitalPublicIp = async (
+  provider: IProvider,
+  rid: string,
+  status: boolean,
+  publicAddress: string[]
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
@@ -443,9 +454,14 @@ const verifyHospitalPublicIp = async (provider: IProvider, rid: string, status: 
     console.log("error: verifyHospitalPublicIp");
     console.log(error);
   }
-}
+};
 
-const verifyTpaPublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+const verifyTpaPublicIp = async (
+  provider: IProvider,
+  rid: string,
+  status: boolean,
+  publicAddress: string[]
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
@@ -477,9 +493,13 @@ const verifyTpaPublicIp = async (provider: IProvider, rid: string, status: boole
     console.log("error: verifyTpaPublicIp");
     console.log(error);
   }
-}
+};
 
-const isFullyVerified = async (provider: IProvider, rid: string, publicAddress: string[]) => {
+const isFullyVerified = async (
+  provider: IProvider,
+  rid: string,
+  publicAddress: string[]
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = createPublicClient({
@@ -500,8 +520,106 @@ const isFullyVerified = async (provider: IProvider, rid: string, publicAddress: 
     console.log("error: isFullyVerified");
     console.log(error);
   }
-}
+};
 
+const getTpaReimbursements = async (
+  provider: IProvider,
+  publicAddress: string[]
+) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getTpaReimbursements",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getDocumentsByReimbursementId = async (
+  provider: IProvider,
+  publicAddress: string[],
+  reimbursementID: string
+) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    const chainId = await getChainId(provider);
+    let doccontent = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getDocumentsByReimbursementId",
+      args: [reimbursementID],
+    });
+
+    return doccontent;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const attestClaim = async (
+  provider: IProvider,
+  documentHash: string,
+  reimbursementID: string,
+  approved: boolean,
+  reason: string,
+  publicAddress: string[]
+) => {
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    console.log(publicAddress[0]);
+    const chainId = await getChainId(provider);
+    console.log(1);
+    console.log(chainId);
+    // @ts-ignore
+    console.log(contractAddressesSign[chainId]);
+
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "attestDocument",
+      args: [documentHash, reimbursementID, approved, reason],
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    return "success";
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
 
 const verifyAndExecuteWorldCoin = async (provider: IProvider, signal: string, root: string, nullifierHash: string, proof: any[], publicAddress: string[]) => {
   console.log("public Address: ", publicAddress[0])
@@ -558,6 +676,9 @@ export default {
   getHospitals,
   getInsuranceAgencies,
   linkWorldCoinId,
+  getTpaReimbursements,
+  getDocumentsByReimbursementId,
+  attestClaim,
   verifyInsurancePublicIp,
   verifyHospitalPublicIp,
   verifyTpaPublicIp,

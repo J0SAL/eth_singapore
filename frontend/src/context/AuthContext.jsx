@@ -193,6 +193,31 @@ export function AuthProvider({ children }) {
     return finalpartyaddresses;
   };
 
+  const getTpaReimbursements = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const reimbursements = await RPC.getTpaReimbursements(
+      provider,
+      publicAddress
+    );
+    return reimbursements;
+  };
+
+  const getDocumentsByReimbursementId = async (reimbursementID) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const reimbDocs = await RPC.getDocumentsByReimbursementId(
+      provider,
+      publicAddress,
+      reimbursementID
+    );
+    return reimbDocs;
+  };
+
   const linkWorldCoinId = async (worldCoinId) => {
     if (!provider) {
       console.log("provider not initialized yet");
@@ -201,13 +226,51 @@ export function AuthProvider({ children }) {
     await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
   };
 
-  const createReimbursementRequest = async (tpaPublic, insurancePublic, hospitalPublic, rid, docHash, claimData, claimAmount) => {
+  const createReimbursementRequest = async (
+    tpaPublic,
+    insurancePublic,
+    hospitalPublic,
+    rid,
+    docHash,
+    claimData,
+    claimAmount
+  ) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
-    await RPC.createReimbursementRequestByUser(provider, tpaPublic, insurancePublic, hospitalPublic, rid, docHash, claimData, claimAmount, publicAddress);
-  }
+    return await RPC.createReimbursementRequestByUser(
+      provider,
+      tpaPublic,
+      insurancePublic,
+      hospitalPublic,
+      rid,
+      docHash,
+      claimData,
+      claimAmount,
+      publicAddress
+    );
+  };
+
+  const attestClaim = async (
+    documentHash,
+    reimbursementID,
+    approved,
+    reason
+  ) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    return await RPC.attestClaim(
+      provider,
+      documentHash,
+      reimbursementID,
+      approved,
+      reason,
+      publicAddress
+    );
+  };
 
   const verifyInsurancePublicIp = async (rid, status) => {
     if (!provider) {
@@ -215,21 +278,21 @@ export function AuthProvider({ children }) {
       return;
     }
     await RPC.verifyInsurancePublicIp(provider, rid, status, publicAddress);
-  }
+  };
   const verifyHospitalPublicIp = async (rid, status) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
     await RPC.verifyHospitalPublicIp(provider, rid, status, publicAddress);
-  }
+  };
   const verifyTpaPublicIp = async (rid, status) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
     await RPC.verifyTpaPublicIp(provider, rid, status, publicAddress);
-  }
+  };
 
   const isFullyVerified = async (rid) => {
     if (!provider) {
@@ -273,6 +336,9 @@ export function AuthProvider({ children }) {
         verifyTpaPublicIp,
         isFullyVerified,
         verifyAndExecuteWorldCoin,
+        getTpaReimbursements,
+        getDocumentsByReimbursementId,
+        attestClaim,
       }}
     >
       {children}

@@ -38,8 +38,8 @@ contract MyContract {
     // Mapping for reimbursement ID to reimbursement data
     mapping(string => Reimbursement) public reimbursements;
 
-    //this address is the wallet address of the customer who has uploaded the bills
-    mapping(address => DocumentSchema[]) public documents;
+    //this string is the reimbursementID for fetching the documents related to that reimbursement
+    mapping(string => DocumentSchema[]) public documents;
 
     uint256 public reimbursementCounter;
     string[] public reimbursementids;
@@ -137,7 +137,7 @@ contract MyContract {
             isAttested: false
         });
 
-        documents[msg.sender].push(newDoc);
+        documents[_newReimbursementId].push(newDoc);
         emit DocumentSubmitted(msg.sender, _documentHash, _claimData, amount);
 
         // Emit an event for the new reimbursement request
@@ -263,7 +263,11 @@ contract MyContract {
             Reimbursement storage reimbursement = reimbursements[
                 reimbursementids[i]
             ];
-            if (reimbursement.hospitalPublicIp == msg.sender) {
+            if (keccak256(
+                    abi.encodePacked(
+                        reimbursement.hospitalPublicIp
+                    )
+                ) == keccak256(abi.encodePacked(msg.sender))) {
                 hospitalReimbursements[count] = reimbursement;
                 count++;
             }
@@ -291,7 +295,11 @@ contract MyContract {
             Reimbursement storage reimbursement = reimbursements[
                 reimbursementids[i]
             ];
-            if (reimbursement.userIp == msg.sender) {
+            if (keccak256(
+                    abi.encodePacked(
+                        reimbursement.userIp
+                    )
+                ) == keccak256(abi.encodePacked(msg.sender))) {
                 userReimbursements[count] = reimbursement;
                 count++;
             }
@@ -319,7 +327,11 @@ contract MyContract {
             Reimbursement storage reimbursement = reimbursements[
                 reimbursementids[i]
             ];
-            if (reimbursement.tpaPublicIp == msg.sender) {
+            if (keccak256(
+                    abi.encodePacked(
+                        reimbursement.tpaPublicIp
+                    )
+                ) == keccak256(abi.encodePacked(msg.sender))) {
                 tpaReimbursements[count] = reimbursement;
                 count++;
             }
@@ -347,7 +359,11 @@ contract MyContract {
             Reimbursement storage reimbursement = reimbursements[
                 reimbursementids[i]
             ];
-            if (reimbursement.insurancePublicIp == msg.sender) {
+            if (keccak256(
+                    abi.encodePacked(
+                        reimbursement.insurancePublicIp
+                    )
+                ) == keccak256(abi.encodePacked(msg.sender))) {
                 insuranceReimbursements[count] = reimbursement;
                 count++;
             }
@@ -387,43 +403,23 @@ contract MyContract {
         return temp;
     }
 
-    function submitDocument(
-        string memory _documentHash,
-        string memory _claim,
-        uint256 _amount,
-        string memory _reimbursementId
-    ) public {
-        DocumentSchema memory newDoc = DocumentSchema({
-            reimbursementId: _reimbursementId,
-            documentHash: _documentHash,
-            claim: _claim,
-            amount: _amount,
-            attestedBy: address(0),
-            isAttested: false
-        });
-
-        documents[msg.sender].push(newDoc);
-        emit DocumentSubmitted(msg.sender, _documentHash, _claim, _amount);
-    }
-
     function attestDocument(
-        address customer_address,
         string memory _documentHash,
         string memory _reimbursementId
     ) public {
         // Assuming attestation by a specific wallet (third-party)
         Reimbursement storage reimbursement = reimbursements[_reimbursementId];
         address attester_address = reimbursement.tpaPublicIp;
-        for (uint256 i = 0; i < documents[customer_address].length; i++) {
+        for (uint256 i = 0; i < documents[_reimbursementId].length; i++) {
             if (
                 keccak256(
                     abi.encodePacked(
-                        documents[customer_address][i].documentHash
+                        documents[_reimbursementId][i].documentHash
                     )
                 ) == keccak256(abi.encodePacked(_documentHash))
             ) {
-                documents[customer_address][i].isAttested = true;
-                documents[customer_address][i].attestedBy = attester_address;
+                documents[_reimbursementId][i].isAttested = true;
+                documents[_reimbursementId][i].attestedBy = attester_address;
                 emit DocumentAttested(attester_address, _documentHash, true);
                 break;
             }
