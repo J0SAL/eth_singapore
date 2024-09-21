@@ -3,9 +3,9 @@ import Home from "../components/home/Home";
 import Profile from "../components/profile/Profile";
 import TestContract from "../components/home/TestContract";
 import Form from "../components/bill_upload/Form";
-import InsuranceClaimForm from "../components/InsuranceClaimForm/InsuranceClaimFOrm";
 import PolicyAttestor from "../components/PolicyAttestor/UploadForm";
 import PolicyListPage from "../components/PolicyAttestor/PolicyList";
+import InsuranceClaimForm from "../components/InsuranceClaimForm/InsuranceClaimForm";
  // Add this line
 
 function CustomRoutes() {
