@@ -647,6 +647,32 @@ const attestClaim = async (
   }
 };
 
+const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
+  console.log("public address in findWorldId: ", publicAddress[0]);
+  try {
+    const chainId = await getChainId(provider);
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    
+    let isVerified = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "publicAddressToWorldCoinId",
+      args:[publicAddress[0]],
+       // @ts-ignore
+       account: `${publicAddress[0]}`,
+    });
+
+    return isVerified;
+  } catch (error) {
+    console.log("error: findWorldId");
+    console.log(error);
+  }
+}
+
 export default {
   getChainId,
   getAccounts,
@@ -668,4 +694,5 @@ export default {
   verifyHospitalPublicIp,
   verifyTpaPublicIp,
   isFullyVerified,
+  findWorldId,
 };
