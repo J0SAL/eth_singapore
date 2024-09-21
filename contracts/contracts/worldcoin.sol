@@ -2,10 +2,9 @@
 
 pragma solidity ^0.8.24;
 
-import { ByteHasher } from './helpers/ByteHasher.sol';
-import { IWorldID } from './interfaces/IWorldID.sol';
+import {ByteHasher} from "./helpers/ByteHasher.sol";
+import {IWorldID} from "./interfaces/IWorldID.sol";
 import "hardhat/console.sol";
-
 
 contract HelloWorld {
     /// @dev This allows us to use our hashToField function on bytes
@@ -13,7 +12,6 @@ contract HelloWorld {
 
     /// @notice Thrown when attempting to reuse a nullifier
     error InvalidNullifier();
-
 
     /// @dev The address of the World ID Router contract that will be used for verifying proofs
     IWorldID internal immutable worldId;
@@ -28,21 +26,21 @@ contract HelloWorld {
     mapping(uint256 => bool) internal nullifierHashes;
 
     /// @param nullifierHash The nullifier hash for the verified proof
-	/// @dev A placeholder event that is emitted when a user successfully verifies with World ID
-	event Verified(uint256 nullifierHash);
+    /// @dev A placeholder event that is emitted when a user successfully verifies with World ID
+    event Verified(uint256 nullifierHash);
 
     /// @param _worldId The WorldID router that will verify the proofs
-	/// @param _appId The World ID app ID
-	/// @param _action The World ID action ID
+    /// @param _appId The World ID app ID
+    /// @param _action The World ID action ID
     constructor(
-    IWorldID _worldId,
-    string memory _appId,
-    string memory _action
+        IWorldID _worldId,
+        string memory _appId,
+        string memory _action
     ) {
         worldId = _worldId;
         externalNullifierHash = abi
-        .encodePacked(abi.encodePacked(_appId).hashToField(), _action)
-        .hashToField();
+            .encodePacked(abi.encodePacked(_appId).hashToField(), _action)
+            .hashToField();
     }
 
     /// @param signal An arbitrary input from the user that cannot be tampered with. In this case, it is the user's wallet address.
@@ -77,11 +75,4 @@ contract HelloWorld {
         // Finally, execute your logic here, knowing the user is verified
         emit Verified(nullifierHash);
     }
-
-
-
 }
-
-
-
-
