@@ -1,4 +1,4 @@
-// TPAClaims.js
+// HospitalClaims.js
 
 import React, { useEffect, useState } from "react";
 import {
@@ -21,8 +21,8 @@ import {
 import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import BusinessIcon from "@mui/icons-material/Business";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -77,13 +77,13 @@ const StatusContainer = styled(motion(Box))(({ theme, isActive }) => ({
   borderRadius: theme.spacing(1),
 }));
 
-const TPAClaims = () => {
+const HospitalClaims = () => {
   const [reimbursements, setReimbursements] = useState([]);
   const {
-    getTpaReimbursements,
+    getHospitalReimbursements,
     getDocumentsByReimbursementId,
     publicAddress,
-    verifyTpaPublicIp,
+    verifyHospitalPublicIp,
   } = useAuth();
 
   // Similar download state variables as in UserClaims
@@ -96,7 +96,7 @@ const TPAClaims = () => {
   useEffect(() => {
     const fetchReimbursements = async () => {
       try {
-        const reimbs = await getTpaReimbursements(publicAddress);
+        const reimbs = await getHospitalReimbursements(publicAddress);
         if (Array.isArray(reimbs)) {
           const reimbursementsWithDetails = await Promise.all(
             reimbs.map(async (reimbursement) => {
@@ -119,7 +119,7 @@ const TPAClaims = () => {
     };
     fetchReimbursements();
   }, [
-    getTpaReimbursements,
+    getHospitalReimbursements,
     getDocumentsByReimbursementId,
     publicAddress,
   ]);
@@ -227,11 +227,11 @@ const TPAClaims = () => {
     }
   };
 
-  const handleApprove = async (reimbursementId, documentHash) => {
+  const handleApprove = async (reimbursementId) => {
     try {
-      await verifyTpaPublicIp(documentHash, reimbursementId, true, "");
+      await verifyHospitalPublicIp(reimbursementId, true);
       // Refetch reimbursements
-      const reimbs = await getTpaReimbursements(publicAddress);
+      const reimbs = await getHospitalReimbursements(publicAddress);
       setReimbursements(reimbs);
       if (Array.isArray(reimbs)) {
         const reimbursementsWithDetails = await Promise.all(
@@ -251,11 +251,11 @@ const TPAClaims = () => {
     }
   };
 
-  const handleReject = async (reimbursementId, documentHash, reason) => {
+  const handleReject = async (reimbursementId) => {
     try {
-      await verifyTpaPublicIp(documentHash, reimbursementId, false, reason);
+      await verifyHospitalPublicIp(reimbursementId, false);
       // Refetch reimbursements
-      const reimbs = await getTpaReimbursements(publicAddress);
+      const reimbs = await getHospitalReimbursements(publicAddress);
       setReimbursements(reimbs);
     } catch (error) {
       console.error("Failed to reject the claim", error);
@@ -265,7 +265,7 @@ const TPAClaims = () => {
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" align="center" gutterBottom>
-        TPA Claims
+        Hospital Claims
       </Typography>
       <Grid container spacing={4}>
         {Array.isArray(reimbursements) &&
@@ -297,7 +297,7 @@ const TPAClaims = () => {
                       <Avatar
                         sx={{ bgcolor: "primary.main", marginRight: 2 }}
                       >
-                        <AccountBalanceIcon />
+                        <LocalHospitalIcon />
                       </Avatar>
                       <Typography variant="h6" component="div">
                         {reimbursement.claim || "No Title"}
@@ -394,36 +394,30 @@ const TPAClaims = () => {
                     {getFinalStatus(isClaimActive)}
 
                     {/* Approve/Reject Buttons */}
-                    {!reimbursement.tpaPublicIpVerified && (
-                      <Box sx={{ mt: 2 }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() =>
-                            handleApprove(
-                              reimbursement.reimbursementId,
-                              reimbursement.documentHash
-                            )
-                          }
-                          sx={{ mr: 2 }}
-                        >
-                          Approve
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={() =>
-                            handleReject(
-                              reimbursement.reimbursementId,
-                              reimbursement.documentHash,
-                              "Reason for rejection"
-                            )
-                          }
-                        >
-                          Reject
-                        </Button>
-                      </Box>
-                    )}
+                    {!reimbursement.hospitalPublicVerified &&
+                      reimbursement.tpaPublicIpVerified && (
+                        <Box sx={{ mt: 2 }}>
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() =>
+                              handleApprove(reimbursement.reimbursementId)
+                            }
+                            sx={{ mr: 2 }}
+                          >
+                            Approve
+                          </Button>
+                          <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() =>
+                              handleReject(reimbursement.reimbursementId)
+                            }
+                          >
+                            Reject
+                          </Button>
+                        </Box>
+                      )}
 
                     {/* Download Button */}
                     <Button
@@ -543,4 +537,4 @@ const TPAClaims = () => {
   );
 };
 
-export default TPAClaims;
+export default HospitalClaims;

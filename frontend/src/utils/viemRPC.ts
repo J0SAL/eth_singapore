@@ -15,7 +15,6 @@ import {
   contractAddresses,
   worldCoinAddress,
   worldCoinAbi,
-
 } from "../contract_ref";
 
 const getViewChain = (provider: IProvider) => {
@@ -551,6 +550,61 @@ const getTpaReimbursements = async (
   }
 };
 
+const getHospitalReimbursements = async (
+  provider: IProvider,
+  publicAddress: string[]
+) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getHospitalReimbursements",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+// getInsuranceReimbursements
+
+const getInsuranceReimbursements = async (
+  provider: IProvider,
+  publicAddress: string[]
+) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getInsuranceReimbursements",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
 const getUserReimbursements = async (
   provider: IProvider,
   publicAddress: string[]
@@ -650,8 +704,15 @@ const attestClaim = async (
   }
 };
 
-const verifyAndExecuteWorldCoin = async (provider: IProvider, signal: string, root: string, nullifierHash: string, proof: any[], publicAddress: string[]) => {
-  console.log("public Address: ", publicAddress[0])
+const verifyAndExecuteWorldCoin = async (
+  provider: IProvider,
+  signal: string,
+  root: string,
+  nullifierHash: string,
+  proof: any[],
+  publicAddress: string[]
+) => {
+  console.log("public Address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
       chain: getViewChain(provider),
@@ -669,18 +730,13 @@ const verifyAndExecuteWorldCoin = async (provider: IProvider, signal: string, ro
     console.log(chainId);
     // @ts-ignore
     console.log(contractAddressesSign[chainId]);
-  
+
     let hash = await walletClient.writeContract({
       abi: worldCoinAbi,
       // @ts-ignore
       address: `${worldCoinAddress[chainId]}`,
       functionName: "verifyAndExecute",
-      args: [
-        signal,
-        root, 
-        nullifierHash, 
-        proof
-      ],
+      args: [signal, root, nullifierHash, proof],
     });
     await publicClient.waitForTransactionReceipt({ hash });
     return "success";
@@ -700,15 +756,15 @@ const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
     });
 
     const chainId = await getChainId(provider);
-    
+
     let worldid = await publicClient.readContract({
       abi: signabi,
       // @ts-ignore
       address: `${contractAddressesSign[chainId]}`,
       functionName: "publicAddressToWorldCoinId",
-      args:[publicAddress[0]],
-       // @ts-ignore
-       account: `${publicAddress[0]}`,
+      args: [publicAddress[0]],
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
     });
     // @ts-ignore
     return worldid?.length > 1 ? worldid : null;
@@ -717,7 +773,7 @@ const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
     console.log(error);
     return null;
   }
-}
+};
 
 export default {
   getChainId,
@@ -742,4 +798,6 @@ export default {
   isFullyVerified,
   verifyAndExecuteWorldCoin,
   findWorldId,
+  getHospitalReimbursements,
+  getInsuranceReimbursements,
 };

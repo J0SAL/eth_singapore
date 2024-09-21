@@ -10,7 +10,9 @@ import InsuranceClaimForm from "../components/InsuranceClaimForm/InsuranceClaimF
 import { HomePage } from "../components/HomePage/HomePage";
 import GetClaims from "../components/user_claims/GetClaims";
 import UserClaims from "../components/user_claims/list";
-import { Attestor } from "../components/Attestor/Attestor";
+import Attestor from "../components/Attestor/Attestor";
+import Hospitals from "../components/Hospitals/Hospitals";
+import Insurance from "../components/Insurance/Insurance";
 // Add this line
 
 function CustomRoutes() {
@@ -29,6 +31,8 @@ function CustomRoutes() {
       <Route path="/home" element={<HomePage />} />
       <Route path="/list-claims" element={<UserClaims />} />
       <Route path="/attestor" element={<Attestor />} />
+      <Route path="/hospitals" element={<Hospitals />} />
+      <Route path="/insurance" element={<Insurance />} />
     </Routes>
   );
 }

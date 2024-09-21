@@ -54,6 +54,7 @@ export function AuthProvider({ children }) {
   const [provider, setProvider] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
   const [isWorldIdVerified, setIsWorldIdVerified] = useState(false);
+  const [tpaReimbursements, setTpaReimbursements] = useState([]);
 
   const [publicAddress, setWalletAddress] = useState("");
   const [userInfo, setUserInfo] = useState({});
@@ -120,6 +121,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (publicAddress?.length > 0) {
       findWorldId();
+      getTpaReimbursements();
     }
   }, [publicAddress]);
 
@@ -211,13 +213,40 @@ export function AuthProvider({ children }) {
     return finalpartyaddresses;
   };
 
-  const getTpaReimbursements = async (publicAddress) => {
+  const getTpaReimbursements = async () => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
     console.log("In tpa - ", publicAddress);
     const reimbursements = await RPC.getTpaReimbursements(
+      provider,
+      publicAddress
+    );
+    return reimbursements;
+  };
+
+  const getHospitalReimbursements = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    console.log("In tpa - ", publicAddress);
+    const reimbursements = await RPC.getHospitalReimbursements(
+      provider,
+      publicAddress
+    );
+    return reimbursements;
+  };
+  // getInsuranceReimbursements
+
+  const getInsuranceReimbursements = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    console.log("In tpa - ", publicAddress);
+    const reimbursements = await RPC.getInsuranceReimbursements(
       provider,
       publicAddress
     );
@@ -364,6 +393,7 @@ export function AuthProvider({ children }) {
         publicAddress,
         userInfo,
         accountBalance,
+        tpaReimbursements,
         getUserInfo,
         logout,
         getAccounts,
@@ -383,6 +413,8 @@ export function AuthProvider({ children }) {
         isFullyVerified,
         verifyAndExecuteWorldCoin,
         getTpaReimbursements,
+        getHospitalReimbursements,
+        getInsuranceReimbursements,
         getDocumentsByReimbursementId,
         attestClaim,
         getUserReimbursements,
