@@ -3,6 +3,7 @@ import Home from "../components/home/Home";
 import Profile from "../components/profile/Profile";
 import TestContract from "../components/home/TestContract";
 import Form from "../components/bill_upload/Form";
+import Attest from "../components/attest_bills/Attest";
 
 function CustomRoutes() {
   return (
@@ -11,6 +12,7 @@ function CustomRoutes() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/test" element={<TestContract />} />
       <Route path="/form" element={<Form />} />
+      <Route path="/attest" element={<Attest />} />
     </Routes>
   );
 }

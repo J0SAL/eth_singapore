@@ -2,11 +2,6 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "customer_address",
-        "type": "address"
-      },
-      {
         "internalType": "string",
         "name": "_documentHash",
         "type": "string"
@@ -14,6 +9,16 @@
       {
         "internalType": "string",
         "name": "_reimbursementId",
+        "type": "string"
+      },
+      {
+        "internalType": "bool",
+        "name": "approve",
+        "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "reason",
         "type": "string"
       }
     ],
@@ -230,34 +235,6 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "_documentHash",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_claim",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "_reimbursementId",
-        "type": "string"
-      }
-    ],
-    "name": "submitDocument",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
         "name": "_reimbursementId",
         "type": "string"
       },
@@ -329,9 +306,9 @@
   {
     "inputs": [
       {
-        "internalType": "address",
+        "internalType": "string",
         "name": "",
-        "type": "address"
+        "type": "string"
       },
       {
         "internalType": "uint256",
@@ -370,6 +347,67 @@
         "internalType": "bool",
         "name": "isAttested",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "rejectionReason",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "reimbursementId",
+        "type": "string"
+      }
+    ],
+    "name": "getDocumentsByReimbursementId",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "reimbursementId",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "documentHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "claim",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "attestedBy",
+            "type": "address"
+          },
+          {
+            "internalType": "bool",
+            "name": "isAttested",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "rejectionReason",
+            "type": "string"
+          }
+        ],
+        "internalType": "struct MyContract.DocumentSchema[]",
+        "name": "",
+        "type": "tuple[]"
       }
     ],
     "stateMutability": "view",

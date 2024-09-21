@@ -1,6 +1,5 @@
 import React from "react";
 import { SignProtocolClient, SpMode } from "@ethsign/sp-sdk";
-import { privateKeyToAccount } from "viem/accounts";
 import { contractAddressesSign } from "../../contract_ref";
 import { useAuth } from "../../context/AuthContext";
 import { v4 as uuidv4 } from "uuid";
@@ -59,7 +58,7 @@ const Form = () => {
     const finalpartyaddresses = await getInsuranceAgencies();
     //call the method to get the tpa address from the reimbursement id
 
-    await createReimbursementRequest(
+    const resp = await createReimbursementRequest(
       party1addresses[0],
       party2addresses[0],
       finalpartyaddresses[0],
@@ -68,6 +67,7 @@ const Form = () => {
       claimData,
       claimAmount
     );
+    console.log("final reimb req submitted -", resp);
   };
 
   return (
