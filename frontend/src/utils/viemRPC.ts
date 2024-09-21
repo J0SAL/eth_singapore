@@ -8,7 +8,12 @@ import {
 } from "viem";
 import { mainnet, polygonAmoy, sepolia, hardhat } from "viem/chains";
 import type { IProvider } from "@web3auth/base";
-import { signabi, contractAddressesSign, abi, contractAddresses } from "../contract_ref";
+import {
+  signabi,
+  contractAddressesSign,
+  abi,
+  contractAddresses,
+} from "../contract_ref";
 
 const getViewChain = (provider: IProvider) => {
   switch (provider.chainId) {
@@ -180,7 +185,6 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
       transport: custom(provider),
       // @ts-ignore
       account: `${publicAddress[0]}`,
-      account: `${publicAddress[0]}`,
     });
     console.log(publicAddress[0]);
     const chainId = await getChainId(provider);
@@ -203,7 +207,11 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
   }
 };
 
-const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAddress: string) => {
+const linkWorldCoinId = async (
+  provider: IProvider,
+  worldCoinId: string,
+  publicAddress: string
+) => {
   console.log("public address: ", publicAddress[0]);
   try {
     const publicClient = await createPublicClient({
@@ -221,7 +229,7 @@ const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAd
     const chainId = await getChainId(provider);
     // @ts-ignore
     console.log("contract address: ", contractAddressesSign[chainId]);
-    
+
     let hash = await walletClient.writeContract({
       abi: signabi,
       // @ts-ignore
@@ -229,14 +237,13 @@ const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAd
       functionName: "linkWorldCoinId",
       args: [worldCoinId],
     });
-    console.log(hash)
+    console.log(hash);
     await publicClient.waitForTransactionReceipt({ hash });
-
-  } catch (error){
-    console.log("error: linkWorldCoinId")
-    console.log(error)
+  } catch (error) {
+    console.log("error: linkWorldCoinId");
+    console.log(error);
   }
-}
+};
 
 const createReimbursementRequestByUser = async (
   provider: IProvider,

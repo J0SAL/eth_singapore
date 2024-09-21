@@ -226,7 +226,7 @@ export function AuthProvider({ children }) {
       return;
     }
     await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
-  }
+  };
 
   return (
     <AuthContext.Provider
@@ -247,6 +247,7 @@ export function AuthProvider({ children }) {
         getTPAs,
         getHospitals,
         getInsuranceAgencies,
+        linkWorldCoinId,
       }}
     >
       {children}
