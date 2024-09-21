@@ -458,8 +458,10 @@ const verifyHospitalPublicIp = async (
 
 const verifyTpaPublicIp = async (
   provider: IProvider,
+  documentHash: string,
   rid: string,
   status: boolean,
+  reason: string,
   publicAddress: string[]
 ) => {
   console.log("public address: ", publicAddress[0]);
@@ -485,7 +487,7 @@ const verifyTpaPublicIp = async (
       // @ts-ignore
       address: `${contractAddressesSign[chainId]}`,
       functionName: "verifyTpaPublicIp",
-      args: [rid, status],
+      args: [documentHash, rid, status, reason],
     });
     console.log(hash);
     await publicClient.waitForTransactionReceipt({ hash });
@@ -539,6 +541,33 @@ const getTpaReimbursements = async (
       // @ts-ignore
       address: `${contractAddressesSign[chainId]}`,
       functionName: "getTpaReimbursements",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getUserReimbursements = async (
+  provider: IProvider,
+  publicAddress: string[]
+) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getUserReimbursements",
     });
 
     return party1addresses;
@@ -703,6 +732,7 @@ export default {
   getInsuranceAgencies,
   linkWorldCoinId,
   getTpaReimbursements,
+  getUserReimbursements,
   getDocumentsByReimbursementId,
   attestClaim,
   verifyInsurancePublicIp,

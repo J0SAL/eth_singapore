@@ -283,13 +283,23 @@
     "inputs": [
       {
         "internalType": "string",
+        "name": "_documentHash",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
         "name": "_reimbursementId",
         "type": "string"
       },
       {
         "internalType": "bool",
-        "name": "_status",
+        "name": "approve",
         "type": "bool"
+      },
+      {
+        "internalType": "string",
+        "name": "reason",
+        "type": "string"
       }
     ],
     "name": "verifyTpaPublicIp",

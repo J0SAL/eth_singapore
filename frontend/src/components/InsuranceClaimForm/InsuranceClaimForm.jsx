@@ -184,12 +184,7 @@ const InsuranceClaimForm = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Grid
-          container
-          spacing={1}
-          alignItems="center"
-          justifyContent="center"
-        >
+        <Grid container spacing={1} alignItems="center" justifyContent="center">
           {/* Left Side - Image */}
           <Grid item xs={12} md={6}>
             <img
