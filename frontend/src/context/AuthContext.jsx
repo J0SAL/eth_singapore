@@ -166,33 +166,6 @@ export function AuthProvider({ children }) {
     console.log(result);
   };
 
-  const createReimbursementRequestByUser = async (
-    party1address,
-    party2address,
-    finalpartyaddress,
-    reimbursementID,
-    ipfshash,
-    claimData,
-    claimAmount
-  ) => {
-    if (!provider) {
-      console.log("provider not initialized yet");
-      return;
-    }
-    const result = await RPC.createReimbursementRequestByUser(
-      provider,
-      publicAddress,
-      party1address,
-      party2address,
-      finalpartyaddress,
-      reimbursementID,
-      ipfshash,
-      claimData,
-      claimAmount
-    );
-    console.log(result);
-  };
-
   const getTPAs = async () => {
     if (!provider) {
       console.log("provider not initialized yet");
@@ -228,12 +201,12 @@ export function AuthProvider({ children }) {
     await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
   };
 
-  const createReimbursementRequest = async (tpaPublic, insurancePublic, hospitalPublic, rid) => {
+  const createReimbursementRequest = async (tpaPublic, insurancePublic, hospitalPublic, rid, docHash, claimData, claimAmount) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
-    await RPC.createReimbursementRequest(provider, tpaPublic, insurancePublic, hospitalPublic, rid, publicAddress);
+    await RPC.createReimbursementRequestByUser(provider, tpaPublic, insurancePublic, hospitalPublic, rid, docHash, claimData, claimAmount, publicAddress);
   }
   return (
     <AuthContext.Provider
@@ -250,7 +223,6 @@ export function AuthProvider({ children }) {
         // -
         getUnlockTime,
         withdrawMoney,
-        createReimbursementRequestByUser,
         createReimbursementRequest,
         getTPAs,
         getHospitals,

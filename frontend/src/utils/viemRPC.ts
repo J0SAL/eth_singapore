@@ -247,14 +247,14 @@ const linkWorldCoinId = async (
 
 const createReimbursementRequestByUser = async (
   provider: IProvider,
-  publicAddress: string,
   party1address: string,
   party2address: string,
   finalpartyaddress: string,
   reimbursementID: string,
   ipfshash: string,
   claimData: string,
-  claimAmount: number
+  claimAmount: number,
+  publicAddress: string[],
 ) => {
   try {
     const publicClient = await createPublicClient({
@@ -374,41 +374,6 @@ const getInsuranceAgencies = async (provider: IProvider) => {
   }
 };
 
-const createReimbursementRequest = async (provider: IProvider, tpaPublic :string, insurancePublic: string, hospitalPublic: string, rid: string, publicAddress: string[]) => {
-  console.log("public address: ", publicAddress[0]);
-  try {
-    const publicClient = await createPublicClient({
-      chain: getViewChain(provider),
-      transport: custom(provider),
-    });
-
-    const walletClient = await createWalletClient({
-      chain: getViewChain(provider),
-      transport: custom(provider),
-      // @ts-ignore
-      account: `${publicAddress[0]}`,
-    });
-
-    const chainId = await getChainId(provider);
-    // @ts-ignore
-    console.log("contract address: ", contractAddressesSign[chainId]);
-    
-    let hash = await walletClient.writeContract({
-      abi: signabi,
-      // @ts-ignore
-      address: `${contractAddressesSign[chainId]}`,
-      functionName: "createReimbursementRequest",
-      args: [tpaPublic, insurancePublic, hospitalPublic, rid],
-    });
-    console.log(hash)
-    await publicClient.waitForTransactionReceipt({ hash });
-
-  } catch (error){
-    console.log("error: linkWorldCoinId")
-    console.log(error)
-  }
-}
-
 
 export default {
   getChainId,
@@ -422,6 +387,5 @@ export default {
   getTPAs,
   getHospitals,
   getInsuranceAgencies,
-  linkWorldCoinId,
-  createReimbursementRequest,
+  linkWorldCoinId
 };

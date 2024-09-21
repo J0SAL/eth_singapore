@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const Form = () => {
   const {
-    createReimbursementRequestByUser,
+    createReimbursementRequest,
     publicAddress,
     getHospitals,
     getInsuranceAgencies,
@@ -59,7 +59,7 @@ const Form = () => {
     const finalpartyaddresses = await getInsuranceAgencies();
     //call the method to get the tpa address from the reimbursement id
 
-    await createReimbursementRequestByUser(
+    await createReimbursementRequest(
       party1addresses[0],
       party2addresses[0],
       finalpartyaddresses[0],
