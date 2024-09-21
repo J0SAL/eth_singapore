@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { SignProtocolClient, SpMode } from "@ethsign/sp-sdk";
-import { contractAddressesSign } from "../../contract_ref";
 import { useAuth } from "../../context/AuthContext";
 
 const Attest = () => {
-  const { getTpaReimbursements, getDocumentsByReimbursementId, attestClaim } =
-    useAuth();
+  const {
+    getTpaReimbursements,
+    getDocumentsByReimbursementId,
+    attestClaim,
+    verifyTpaPublicIp,
+  } = useAuth();
   const [reimbursements, setRemibursements] = useState([]);
   const [reimbDocs, setReimbDocs] = useState([]);
   const [reason, setReason] = useState("");
@@ -39,7 +41,8 @@ const Attest = () => {
 
   const handleApprove = async (documentHash, reimbursementID) => {
     console.log("User clicked Approve - ", documentHash, reimbursementID);
-    await attestClaim(documentHash, reimbursementID, true, "");
+    // await attestClaim(documentHash, reimbursementID, true, "");
+    await verifyTpaPublicIp(documentHash, reimbursementID, true, "");
   };
 
   // Function to handle "Disapprove" button click
@@ -48,7 +51,8 @@ const Attest = () => {
       alert("Please provide a reason for disapproving!");
       return;
     }
-    await attestClaim(documentHash, reimbursementID, false, reason);
+    // await attestClaim(documentHash, reimbursementID, false, reason);
+    await verifyTpaPublicIp(documentHash, reimbursementID, false, reason);
     console.log(
       "User clicked Disapprove with reason:",
       reason,

@@ -205,6 +205,18 @@ export function AuthProvider({ children }) {
     return reimbursements;
   };
 
+  const getUserReimbursements = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const reimbursements = await RPC.getUserReimbursements(
+      provider,
+      publicAddress
+    );
+    return reimbursements;
+  };
+
   const getDocumentsByReimbursementId = async (reimbursementID) => {
     if (!provider) {
       console.log("provider not initialized yet");
@@ -286,12 +298,12 @@ export function AuthProvider({ children }) {
     }
     await RPC.verifyHospitalPublicIp(provider, rid, status, publicAddress);
   };
-  const verifyTpaPublicIp = async (rid, status) => {
+  const verifyTpaPublicIp = async (documentHash,rid, status,reason) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
-    await RPC.verifyTpaPublicIp(provider, rid, status, publicAddress);
+    await RPC.verifyTpaPublicIp(provider, documentHash,rid, status,reason, publicAddress);
   };
 
   const isFullyVerified = async (rid) => {
@@ -330,6 +342,7 @@ export function AuthProvider({ children }) {
         getTpaReimbursements,
         getDocumentsByReimbursementId,
         attestClaim,
+        getUserReimbursements,
       }}
     >
       {children}

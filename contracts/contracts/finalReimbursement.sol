@@ -21,6 +21,7 @@ contract MyContract {
         uint256 amount;
         address attestedBy;
         bool isAttested;
+        string rejectionReason;
     }
 
     struct User {
@@ -40,6 +41,10 @@ contract MyContract {
 
     //this string is the reimbursementID for fetching the documents related to that reimbursement
     mapping(string => DocumentSchema[]) public documents;
+
+    function getDocumentsByReimbursementId(string memory reimbursementId) public view returns (DocumentSchema[] memory) {
+        return documents[reimbursementId]; // Returns the array of DocumentSchema objects
+    }
 
     uint256 public reimbursementCounter;
     string[] public reimbursementids;
@@ -134,7 +139,8 @@ contract MyContract {
             claim: _claimData,
             amount: amount,
             attestedBy: address(0),
-            isAttested: false
+            isAttested: false,
+            rejectionReason:''
         });
 
         documents[_newReimbursementId].push(newDoc);
@@ -153,18 +159,38 @@ contract MyContract {
 
     // Function to verify TPA public IP
     function verifyTpaPublicIp(
+        string memory _documentHash,
         string memory _reimbursementId,
-        bool _status
+        bool approve,
+        string memory reason
     ) public returns (bool) {
         Reimbursement storage reimbursement = reimbursements[_reimbursementId];
-        reimbursement.tpaPublicIpVerified = _status;
+        reimbursement.tpaPublicIpVerified = approve;
+
+        // Assuming attestation by a specific wallet (third-party)
+        address attester_address = reimbursement.tpaPublicIp;
+        for (uint256 i = 0; i < documents[_reimbursementId].length; i++) {
+            if (
+                keccak256(
+                    abi.encodePacked(
+                        documents[_reimbursementId][i].documentHash
+                    )
+                ) == keccak256(abi.encodePacked(_documentHash))
+            ) {
+                documents[_reimbursementId][i].isAttested = approve;
+                documents[_reimbursementId][i].attestedBy = attester_address;
+                documents[_reimbursementId][i].rejectionReason = reason;
+                emit DocumentAttested(attester_address, _documentHash, true);
+                break;
+            }
+        }
 
         // Emit an event for TPA verification
         emit ReimbursementVerified(
             _reimbursementId,
             reimbursement.tpaPublicIp,
             "TPA",
-            _status
+            approve
         );
         return true;
     }
@@ -405,7 +431,9 @@ contract MyContract {
 
     function attestDocument(
         string memory _documentHash,
-        string memory _reimbursementId
+        string memory _reimbursementId,
+        bool approve,
+        string memory reason
     ) public {
         // Assuming attestation by a specific wallet (third-party)
         Reimbursement storage reimbursement = reimbursements[_reimbursementId];
@@ -418,8 +446,9 @@ contract MyContract {
                     )
                 ) == keccak256(abi.encodePacked(_documentHash))
             ) {
-                documents[_reimbursementId][i].isAttested = true;
+                documents[_reimbursementId][i].isAttested = approve;
                 documents[_reimbursementId][i].attestedBy = attester_address;
+                documents[_reimbursementId][i].rejectionReason = reason;
                 emit DocumentAttested(attester_address, _documentHash, true);
                 break;
             }

@@ -38,9 +38,9 @@ function TestContract() {
       <Button onClick={() => verifyHospitalPublicIp("r01", true)}>
         verifyHospitalPublicIp
       </Button>
-      <Button onClick={() => verifyTpaPublicIp("r01", true)}>
+      {/* <Button onClick={() => verifyTpaPublicIp("r01", true)}>
         verifyTpaPublicIp
-      </Button>
+      </Button> */}
       <Button onClick={() => isFullyVerified("r01")}>isFullyVerified</Button>
     </>
   );
