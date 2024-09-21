@@ -8,7 +8,7 @@ import {
 } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3Auth } from "@web3auth/modal";
-import { useEffect, useState, useContext, createContext } from "react";
+import { useEffect, useState, useContext, createContext, useLayoutEffect } from "react";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import RPC from "../utils/viemRPC";
 
@@ -53,11 +53,20 @@ const web3auth = new Web3Auth({
 export function AuthProvider({ children }) {
   const [provider, setProvider] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [isWorldIdVerified, setIsWorldIdVerified] = useState(false);
 
   const [publicAddress, setWalletAddress] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
   const navigate = useNavigate();
+
+
+  useLayoutEffect(() => {
+    if (isWorldIdVerified) {
+      toast.success("World Id Verified!🙋‍♂️");
+      navigate('/')
+    }
+  }, [isWorldIdVerified])
 
   useEffect(() => {
     const init = async () => {
@@ -105,6 +114,7 @@ export function AuthProvider({ children }) {
       getAccounts();
       getBalance();
       getUserInfo();
+      findWorldId();
     }
   }, [loggedIn]);
 
@@ -112,7 +122,6 @@ export function AuthProvider({ children }) {
     const web3authProvider = await web3auth.connect();
     setProvider(web3authProvider);
     if (web3auth.connected) {
-      await findWorldId();
       setLoggedIn(true);
     }
   };
@@ -128,7 +137,7 @@ export function AuthProvider({ children }) {
     setProvider(null);
     setLoggedIn(false);
     console.log("logged out");
-    navigate("/home");
+    navigate("/");
   };
 
   const getAccounts = async () => {
@@ -302,12 +311,12 @@ export function AuthProvider({ children }) {
     }
     await RPC.verifyHospitalPublicIp(provider, rid, status, publicAddress);
   };
-  const verifyTpaPublicIp = async (documentHash,rid, status,reason) => {
+  const verifyTpaPublicIp = async (documentHash, rid, status, reason) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
-    await RPC.verifyTpaPublicIp(provider, documentHash,rid, status,reason, publicAddress);
+    await RPC.verifyTpaPublicIp(provider, documentHash, rid, status, reason, publicAddress);
   };
 
   const isFullyVerified = async (rid) => {
@@ -329,16 +338,15 @@ export function AuthProvider({ children }) {
   }
 
   const findWorldId = async () => {
-    const res = await RPC.findWorldId(provider, publicAddress);
-
-    console.log("Result- ", res);
-    return res ? true : false;
-
+    const worldid = await RPC.findWorldId(provider, publicAddress);
+    if (worldid)
+      setIsWorldIdVerified(true);
   };
 
   return (
     <AuthContext.Provider
       value={{
+        isWorldIdVerified,
         loggedIn,
         login,
         publicAddress,
@@ -365,6 +373,7 @@ export function AuthProvider({ children }) {
         getDocumentsByReimbursementId,
         attestClaim,
         getUserReimbursements,
+        setIsWorldIdVerified,
       }}
     >
       {children}

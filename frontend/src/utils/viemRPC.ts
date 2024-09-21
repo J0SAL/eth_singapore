@@ -701,7 +701,7 @@ const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
 
     const chainId = await getChainId(provider);
     
-    let isVerified = await publicClient.readContract({
+    let worldid = await publicClient.readContract({
       abi: signabi,
       // @ts-ignore
       address: `${contractAddressesSign[chainId]}`,
@@ -711,10 +711,11 @@ const findWorldId = async (provider: IProvider, publicAddress: string[]) => {
        account: `${publicAddress[0]}`,
     });
 
-    return isVerified;
+    return worldid;
   } catch (error) {
     console.log("error: findWorldId");
     console.log(error);
+    return null;
   }
 }
 

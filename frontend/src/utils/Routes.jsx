@@ -23,7 +23,7 @@ function CustomRoutes() {
       <Route path="/policy-list" element={<PolicyListPage />} />
       <Route path="/attest" element={<Attest />} />
       <Route path="/get-user-claims" element={<GetClaims />} />
-      <Route path="/home" element={<HomePage />} />
+      {/* <Route path="/home" element={<HomePage />} /> */}
     </Routes>
   );
 }
