@@ -9,6 +9,7 @@ import PolicyListPage from "../components/PolicyAttestor/PolicyList";
 import InsuranceClaimForm from "../components/InsuranceClaimForm/InsuranceClaimForm";
 import { HomePage } from "../components/HomePage/HomePage";
 import GetClaims from "../components/user_claims/GetClaims";
+import UserClaims from "../components/user_claims/list";
 // Add this line
 
 function CustomRoutes() {
@@ -24,6 +25,8 @@ function CustomRoutes() {
       <Route path="/attest" element={<Attest />} />
       <Route path="/get-user-claims" element={<GetClaims />} />
       {/* <Route path="/home" element={<HomePage />} /> */}
+      <Route path="/home" element={<HomePage />} />
+      <Route path="/list-claims" element={<UserClaims />} />
     </Routes>
   );
 }

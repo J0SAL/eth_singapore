@@ -20,7 +20,6 @@ import {
   Title as TitleIcon,
   Subject as SubjectIcon,
   AttachMoney as AttachMoneyIcon,
-  CleaningServices,
 } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
@@ -29,6 +28,10 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { useAuth } from "../../context/AuthContext"; // Adjust the import path as necessary
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
+import CryptoJS from "crypto-js"; // Import CryptoJS for encryption
+import lighthouse from "@lighthouse-web3/sdk";
+import forge from "node-forge";
 
 const FormContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -92,7 +95,7 @@ const InsuranceClaimForm = () => {
   } = useForm();
   const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const documents = watch("documents") || [];
+  const navigate = useNavigate();
 
   // Use useAuth() custom hook to access blockchain functions
   const {
@@ -105,6 +108,17 @@ const InsuranceClaimForm = () => {
   const [tpaList, setTpaList] = useState([]);
   const [hospitalList, setHospitalList] = useState([]);
   const [insuranceList, setInsuranceList] = useState([]);
+
+  // New state variables
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [docHash, setDocHash] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+  const encryptionKey = "some-key";
+  console.log("🚀 ~ InsuranceClaimForm ~ encryptionKey:", encryptionKey);
+  const apiKey = "a82656cd.fce7a9c4b43e4ff8ad5e24c1414576ed";
+  console.log("🚀 ~ InsuranceClaimForm ~ apiKey:", apiKey);
 
   useEffect(() => {
     // Fetch dropdown data on component mount
@@ -142,15 +156,139 @@ const InsuranceClaimForm = () => {
     fetchDropdownData();
   }, [getTPAs, getHospitals, getInsuranceAgencies]);
 
+  const handleFileChange = (e) => {
+    setSelectedFiles(e.target.files);
+    setUploadSuccess(false);
+    setUploadError("");
+  };
+  const progressCallback = (progressData) => {
+    let percentageDone =
+      100 - (progressData?.total / progressData?.uploaded)?.toFixed(2);
+    console.log("Upload progress:", percentageDone + "%");
+  };
+
+  const encryptFile = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const fileData = event.target.result;
+        // Convert ArrayBuffer to base64 string
+        const base64String = btoa(
+          new Uint8Array(fileData).reduce(
+            (data, byte) => data + String.fromCharCode(byte),
+            ""
+          )
+        );
+
+        // Create an object with file metadata and data
+        const fileObj = {
+          name: file.name,
+          type: file.type,
+          data: base64String,
+        };
+
+        // Convert the object to a JSON string
+        const fileString = JSON.stringify(fileObj);
+
+        // Encrypt the JSON string
+        const encryptedData = CryptoJS.AES.encrypt(
+          fileString,
+          encryptionKey
+        ).toString();
+
+        // Create a Blob from the encrypted data
+        const encryptedBlob = new Blob([encryptedData], { type: "text/plain" });
+
+        // Create a File object with the encrypted Blob and original filename
+        const encryptedFile = new File([encryptedBlob], file.name, {
+          type: "text/plain",
+        });
+
+        resolve([encryptedBlob, encryptedFile]);
+      };
+      reader.onerror = (error) => {
+        console.error("Error reading file:", error);
+        reject(error);
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const handleUpload = async () => {
+    try {
+      setUploading(true);
+      setUploadError("");
+      setUploadSuccess(false);
+
+      // Encrypt and collect encrypted blobs and files
+      if (!selectedFiles || selectedFiles.length === 0) {
+        console.log("No files selected.");
+        return;
+      }
+      try {
+        const encryptedFiles = [];
+        const encryNew = [];
+
+        // Encrypt each file individually without using Promise.all
+        for (let i = 0; i < selectedFiles.length; i++) {
+          const encryptedFileTemp = await encryptFile(selectedFiles[i]);
+          encryptedFiles.push(encryptedFileTemp[0]);
+          encryNew.push(encryptedFileTemp[1]);
+        }
+
+        // Upload the encrypted files as a directory
+        const output = await lighthouse.upload(
+          encryptedFiles,
+          apiKey,
+          true,
+          progressCallback
+        );
+
+        const url = `https://gateway.lighthouse.storage/ipfs/${output.data.Hash}`;
+
+        // Upload the encrypted files as a directory
+        const outputFile = await lighthouse.upload(
+          encryNew,
+          apiKey,
+          true,
+          progressCallback
+        );
+        console.log("🚀 ~ handleUpload ~ outputFile", outputFile.data.Hash);
+
+        // setUploadedUrl(url); // Set the uploaded URL
+
+        // const urlFile = `https://gateway.lighthouse.storage/ipfs/${outputFile.data.Hash}`;
+
+        // setUploadedUrlFile(urlFile); // Set the uploaded URL
+
+        // Set success message and reset file input
+        // setSuccessMessage("Files uploaded successfully!");
+        // setSelectedFiles([]); // Clear file selection
+        setDocHash(outputFile.data.Hash);
+        setUploadSuccess(true);
+      } catch (error) {
+        console.error("Error uploading files:", error);
+        // setSuccessMessage("File upload failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      setUploadError("Failed to upload documents. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const onSubmit = async (data) => {
     try {
+      if (!docHash) {
+        setUploadError("Please upload documents before submitting the claim.");
+        return;
+      }
+
       console.log("Form Data:", data);
 
       // Generate unique reimbursement ID
       const rid = uuidv4(); // Using UUID for uniqueness
-
-      // Generate random docHash (for demonstration purposes)
-      const docHash = uuidv4();
 
       // Combine Title and Subject for claimData
       const claimData = `${data.title} - ${data.subject}`;
@@ -175,6 +313,16 @@ const InsuranceClaimForm = () => {
       );
       console.log(resp);
       setOpenSnackbar(true);
+
+      // Reset the form
+      document.getElementById("insurance-claim-form").reset();
+      setSelectedFiles([]);
+      setDocHash("");
+      setUploadSuccess(false);
+      setUploadError("");
+
+      // Navigate to the user claims page
+      navigate("/list-claims");
     } catch (error) {
       console.error("Error submitting claim:", error);
     }
@@ -202,11 +350,13 @@ const InsuranceClaimForm = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              id="insurance-claim-form"
             >
               <Typography variant="h6" align="center" gutterBottom>
                 <b>Insurance Claim Form</b>
               </Typography>
               <Stack spacing={1}>
+                {/* ... Other form fields ... */}
                 <TextField
                   label="Title"
                   variant="outlined"
@@ -311,6 +461,8 @@ const InsuranceClaimForm = () => {
                     </MenuItem>
                   ))}
                 </TextField>
+
+                {/* File Upload Section */}
                 <Card variant="outlined">
                   <CardContent>
                     <Typography variant="h6" gutterBottom>
@@ -328,25 +480,43 @@ const InsuranceClaimForm = () => {
                         name="documents"
                         hidden
                         multiple
-                        {...register("documents", { required: true })}
+                        onChange={handleFileChange}
+                        required
                       />
                     </Button>
-                    {errors.documents && (
-                      <Typography variant="body2" color="error">
-                        Please upload at least one document.
-                      </Typography>
-                    )}
-                    {documents.length > 0 && (
+                    {selectedFiles.length > 0 && (
                       <Box sx={{ mt: 2 }}>
-                        {[...documents].map((file, index) => (
+                        {[...selectedFiles].map((file, index) => (
                           <Typography variant="body2" key={index}>
                             {file.name}
                           </Typography>
                         ))}
                       </Box>
                     )}
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      startIcon={<CloudUpload />}
+                      onClick={handleUpload}
+                      disabled={selectedFiles.length === 0 || uploading}
+                      sx={{ mt: 2 }}
+                    >
+                      {uploading ? "Uploading..." : "Upload Documents"}
+                    </Button>
+                    {uploadSuccess && (
+                      <Typography variant="body2" color="success.main">
+                        Documents uploaded successfully!
+                      </Typography>
+                    )}
+                    {uploadError && (
+                      <Typography variant="body2" color="error">
+                        {uploadError}
+                      </Typography>
+                    )}
                   </CardContent>
                 </Card>
+
+                {/* Submit Button */}
                 <AnimatedButton
                   type="submit"
                   variant="contained"
