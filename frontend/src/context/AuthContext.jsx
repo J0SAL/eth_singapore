@@ -13,6 +13,7 @@ import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import RPC from "../utils/viemRPC";
 
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
@@ -56,6 +57,7 @@ export function AuthProvider({ children }) {
   const [publicAddress, setWalletAddress] = useState("");
   const [userInfo, setUserInfo] = useState({});
   const [accountBalance, setAccountBalance] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const init = async () => {
@@ -110,6 +112,7 @@ export function AuthProvider({ children }) {
     const web3authProvider = await web3auth.connect();
     setProvider(web3authProvider);
     if (web3auth.connected) {
+      await findWorldId();
       setLoggedIn(true);
     }
   };
@@ -125,6 +128,7 @@ export function AuthProvider({ children }) {
     setProvider(null);
     setLoggedIn(false);
     console.log("logged out");
+    navigate("/home");
   };
 
   const getAccounts = async () => {
@@ -303,6 +307,19 @@ export function AuthProvider({ children }) {
     console.log(res);
   };
 
+  const findWorldId = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+
+    const res = await RPC.findWorldId(provider, publicAddress);
+
+    console.log("Result- ", res);
+    return res ? true: false;
+
+  };
+  
   return (
     <AuthContext.Provider
       value={{

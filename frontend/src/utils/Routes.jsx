@@ -7,6 +7,7 @@ import Attest from "../components/attest_bills/Attest";
 import PolicyAttestor from "../components/PolicyAttestor/UploadForm";
 import PolicyListPage from "../components/PolicyAttestor/PolicyList";
 import InsuranceClaimForm from "../components/InsuranceClaimForm/InsuranceClaimForm";
+import { HomePage } from "../components/HomePage/HomePage";
  // Add this line
 
 function CustomRoutes() {
@@ -20,6 +21,7 @@ function CustomRoutes() {
       <Route path="/policy-attestor" element={<PolicyAttestor />} />
       <Route path="/policy-list" element={<PolicyListPage />} />
       <Route path="/attest" element={<Attest />} />
+      <Route path="/home" element={<HomePage />} />
     </Routes>
   );
 }
