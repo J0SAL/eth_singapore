@@ -167,6 +167,14 @@ export function AuthProvider({ children }) {
     console.log(result);
   }
 
+  const linkWorldCoinId = async (worldCoinId) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
+  }
+
   return (
     <AuthContext.Provider value={{
       loggedIn,
@@ -180,7 +188,8 @@ export function AuthProvider({ children }) {
       getBalance,
       // -
       getUnlockTime,
-      withdrawMoney
+      withdrawMoney,
+      linkWorldCoinId
     }}>
       {children}
     </AuthContext.Provider>
