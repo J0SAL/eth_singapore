@@ -175,6 +175,13 @@ export function AuthProvider({ children }) {
     await RPC.linkWorldCoinId(provider, worldCoinId, publicAddress);
   }
 
+  const createReimbursementRequest = async (tpaPublic, insurancePublic, hospitalPublic, rid) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.createReimbursementRequest(provider, tpaPublic, insurancePublic, hospitalPublic, rid, publicAddress);
+  }
   return (
     <AuthContext.Provider value={{
       loggedIn,
@@ -189,7 +196,8 @@ export function AuthProvider({ children }) {
       // -
       getUnlockTime,
       withdrawMoney,
-      linkWorldCoinId
+      linkWorldCoinId,
+      createReimbursementRequest
     }}>
       {children}
     </AuthContext.Provider>

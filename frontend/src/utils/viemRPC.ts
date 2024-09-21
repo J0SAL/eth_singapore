@@ -237,6 +237,42 @@ const linkWorldCoinId = async (provider: IProvider, worldCoinId:string, publicAd
   }
 }
 
+const createReimbursementRequest = async (provider: IProvider, tpaPublic :string, insurancePublic: string, hospitalPublic: string, rid: string, publicAddress: string[]) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+
+    const chainId = await getChainId(provider);
+    // @ts-ignore
+    console.log("contract address: ", contractAddressesSign[chainId]);
+    
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "createReimbursementRequest",
+      args: [tpaPublic, insurancePublic, hospitalPublic, rid],
+    });
+    console.log(hash)
+    await publicClient.waitForTransactionReceipt({ hash });
+
+  } catch (error){
+    console.log("error: linkWorldCoinId")
+    console.log(error)
+  }
+}
+
+
 export default {
   getChainId,
   getAccounts,
@@ -246,4 +282,5 @@ export default {
   getUnlockTime,
   withdrawMoney,
   linkWorldCoinId,
+  createReimbursementRequest,
 };
