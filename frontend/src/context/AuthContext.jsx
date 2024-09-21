@@ -88,7 +88,7 @@ export function AuthProvider({ children }) {
 
         if (web3auth.connected) {
           setLoggedIn(true);
-          toast.success("Sup User!🙋‍♂️")
+          toast.success("Sup User!🙋‍♂️");
         }
       } catch (error) {
         console.error(error);
@@ -104,7 +104,6 @@ export function AuthProvider({ children }) {
       getBalance();
       getUserInfo();
     }
-
   }, [loggedIn]);
 
   const login = async () => {
@@ -117,7 +116,7 @@ export function AuthProvider({ children }) {
 
   const getUserInfo = async () => {
     const user = await web3auth.getUserInfo();
-    console.log(user)
+    console.log(user);
     setUserInfo(user);
   };
 
@@ -134,7 +133,7 @@ export function AuthProvider({ children }) {
       return "";
     }
     const address = await RPC.getAccounts(provider);
-    console.log(address)
+    console.log(address);
     setWalletAddress(address);
   };
 
@@ -148,7 +147,7 @@ export function AuthProvider({ children }) {
     setAccountBalance(balance);
   };
 
-  // Smart Contract Functions 
+  // Smart Contract Functions
   const getUnlockTime = async () => {
     if (!provider) {
       console.log("provider not initialized yet");
@@ -156,7 +155,7 @@ export function AuthProvider({ children }) {
     }
     const unlockTime = await RPC.getUnlockTime(provider);
     console.log(unlockTime);
-  }
+  };
 
   const withdrawMoney = async () => {
     if (!provider) {
@@ -165,23 +164,83 @@ export function AuthProvider({ children }) {
     }
     const result = await RPC.withdrawMoney(provider, publicAddress);
     console.log(result);
-  }
+  };
+
+  const createReimbursementRequestByUser = async (
+    party1address,
+    party2address,
+    finalpartyaddress,
+    reimbursementID,
+    ipfshash,
+    claimData,
+    claimAmount
+  ) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const result = await RPC.createReimbursementRequestByUser(
+      provider,
+      publicAddress,
+      party1address,
+      party2address,
+      finalpartyaddress,
+      reimbursementID,
+      ipfshash,
+      claimData,
+      claimAmount
+    );
+    console.log(result);
+  };
+
+  const getTPAs = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const party1addresses = await RPC.getTPAs(provider);
+    return party1addresses;
+  };
+
+  const getHospitals = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const party2addresses = await RPC.getHospitals(provider);
+    return party2addresses;
+  };
+
+  const getInsuranceAgencies = async () => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const finalpartyaddresses = await RPC.getInsuranceAgencies(provider);
+    return finalpartyaddresses;
+  };
 
   return (
-    <AuthContext.Provider value={{
-      loggedIn,
-      login,
-      publicAddress,
-      userInfo,
-      accountBalance,
-      getUserInfo,
-      logout,
-      getAccounts,
-      getBalance,
-      // -
-      getUnlockTime,
-      withdrawMoney
-    }}>
+    <AuthContext.Provider
+      value={{
+        loggedIn,
+        login,
+        publicAddress,
+        userInfo,
+        accountBalance,
+        getUserInfo,
+        logout,
+        getAccounts,
+        getBalance,
+        // -
+        getUnlockTime,
+        withdrawMoney,
+        createReimbursementRequestByUser,
+        getTPAs,
+        getHospitals,
+        getInsuranceAgencies,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -3,17 +3,71 @@
         "inputs": [
             {
                 "internalType": "address",
-                "name": "_customer",
+                "name": "customer_address",
                 "type": "address"
             },
             {
                 "internalType": "string",
                 "name": "_documentHash",
                 "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
             }
         ],
         "name": "attestDocument",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_tpaPublicAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_insurancePublicAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "_hospitalPublicAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_newReimbursementId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_documentHash",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "_claimData",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            }
+        ],
+        "name": "createReimbursementRequest",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
     },
@@ -76,6 +130,110 @@
     {
         "inputs": [
             {
+                "internalType": "address",
+                "name": "_publicAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "_worldCoinId",
+                "type": "string"
+            }
+        ],
+        "name": "linkWorldCoinId",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "reimbursementId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "tpaPublicIp",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "insurancePublicIp",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "hospitalPublicIp",
+                "type": "address"
+            }
+        ],
+        "name": "NewReimbursementRequest",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "reimbursementId",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "verifiedBy",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "role",
+                "type": "string"
+            },
+            {
+                "indexed": false,
+                "internalType": "bool",
+                "name": "isVerified",
+                "type": "bool"
+            }
+        ],
+        "name": "ReimbursementVerified",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "emailId",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            }
+        ],
+        "name": "saveUser",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "string",
                 "name": "_documentHash",
                 "type": "string"
@@ -89,10 +247,87 @@
                 "internalType": "uint256",
                 "name": "_amount",
                 "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
             }
         ],
         "name": "submitDocument",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "_status",
+                "type": "bool"
+            }
+        ],
+        "name": "verifyHospitalPublicIp",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "_status",
+                "type": "bool"
+            }
+        ],
+        "name": "verifyInsurancePublicIp",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "_status",
+                "type": "bool"
+            }
+        ],
+        "name": "verifyTpaPublicIp",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
     },
@@ -111,6 +346,11 @@
         ],
         "name": "documents",
         "outputs": [
+            {
+                "internalType": "string",
+                "name": "reimbursementId",
+                "type": "string"
+            },
             {
                 "internalType": "string",
                 "name": "documentHash",
@@ -135,6 +375,547 @@
                 "internalType": "bool",
                 "name": "isAttested",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getHospitalReimbursements",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "tpaPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "insurancePublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "hospitalPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "reimbursementId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "tpaPublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "insurancePublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "hospitalPublicVerified",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct MyContract.Reimbursement[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getHospitals",
+        "outputs": [
+            {
+                "internalType": "string[2]",
+                "name": "",
+                "type": "string[2]"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getInsuranceAgencies",
+        "outputs": [
+            {
+                "internalType": "string[2]",
+                "name": "",
+                "type": "string[2]"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getInsuranceReimbursements",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "tpaPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "insurancePublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "hospitalPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "reimbursementId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "tpaPublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "insurancePublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "hospitalPublicVerified",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct MyContract.Reimbursement[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
+            }
+        ],
+        "name": "getReimbursementsbyId",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "tpaPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "insurancePublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "hospitalPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "reimbursementId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "tpaPublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "insurancePublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "hospitalPublicVerified",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct MyContract.Reimbursement[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTpaReimbursements",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "tpaPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "insurancePublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "hospitalPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "reimbursementId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "tpaPublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "insurancePublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "hospitalPublicVerified",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct MyContract.Reimbursement[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getTPAs",
+        "outputs": [
+            {
+                "internalType": "string[2]",
+                "name": "",
+                "type": "string[2]"
+            }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getUser",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "userAddress",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "userEmail",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "userName",
+                        "type": "string"
+                    }
+                ],
+                "internalType": "struct MyContract.User",
+                "name": "",
+                "type": "tuple"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getUserReimbursements",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "address",
+                        "name": "tpaPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "insurancePublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "hospitalPublicIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "userIp",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "reimbursementId",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "tpaPublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "insurancePublicIpVerified",
+                        "type": "bool"
+                    },
+                    {
+                        "internalType": "bool",
+                        "name": "hospitalPublicVerified",
+                        "type": "bool"
+                    }
+                ],
+                "internalType": "struct MyContract.Reimbursement[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_reimbursementId",
+                "type": "string"
+            }
+        ],
+        "name": "isFullyVerified",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "publicAddressToWorldCoinId",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "reimbursementCounter",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "reimbursementids",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "name": "reimbursements",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "tpaPublicIp",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "insurancePublicIp",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "hospitalPublicIp",
+                "type": "address"
+            },
+            {
+                "internalType": "address",
+                "name": "userIp",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "reimbursementId",
+                "type": "string"
+            },
+            {
+                "internalType": "bool",
+                "name": "tpaPublicIpVerified",
+                "type": "bool"
+            },
+            {
+                "internalType": "bool",
+                "name": "insurancePublicIpVerified",
+                "type": "bool"
+            },
+            {
+                "internalType": "bool",
+                "name": "hospitalPublicVerified",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "userToUserdata",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "userAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "userEmail",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "userName",
+                "type": "string"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_worldCoinId",
+                "type": "string"
+            }
+        ],
+        "name": "worldCoinIdNotExist",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
+            }
+        ],
+        "name": "worldCoinIdToPublicAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
             }
         ],
         "stateMutability": "view",

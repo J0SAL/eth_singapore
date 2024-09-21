@@ -179,9 +179,9 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
       chain: getViewChain(provider),
       transport: custom(provider),
       // @ts-ignore
-      account: `${publicAddress}`,
+      account: `${publicAddress[0]}`,
     });
-    console.log(publicAddress);
+    console.log(publicAddress[0]);
     const chainId = await getChainId(provider);
     console.log(1);
     console.log(chainId);
@@ -202,6 +202,135 @@ const withdrawMoney = async (provider: IProvider, publicAddress: string) => {
   }
 };
 
+const createReimbursementRequestByUser = async (
+  provider: IProvider,
+  publicAddress: string,
+  party1address: string,
+  party2address: string,
+  finalpartyaddress: string,
+  reimbursementID: string,
+  ipfshash: string,
+  claimData: string,
+  claimAmount: number
+) => {
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    console.log(publicAddress[0]);
+    const chainId = await getChainId(provider);
+    console.log(1);
+    console.log(chainId);
+    // @ts-ignore
+    console.log(contractAddressesSign[chainId]);
+    console.log("now values - ");
+    console.log(
+      party1address,
+      party2address,
+      finalpartyaddress,
+      reimbursementID,
+      ipfshash,
+      claimData,
+      claimAmount
+    );
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "createReimbursementRequest",
+      args: [
+        party1address,
+        party2address,
+        finalpartyaddress,
+        reimbursementID,
+        ipfshash,
+        claimData,
+        claimAmount,
+      ],
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    return "success";
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getTPAs = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let party1addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getTPAs",
+    });
+
+    return party1addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getHospitals = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let party2addresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getHospitals",
+    });
+
+    return party2addresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+const getInsuranceAgencies = async (provider: IProvider) => {
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let finalPartyAddresses = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "getInsuranceAgencies",
+    });
+
+    return finalPartyAddresses;
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
 export default {
   getChainId,
   getAccounts,
@@ -210,4 +339,8 @@ export default {
   signMessage,
   getUnlockTime,
   withdrawMoney,
+  createReimbursementRequestByUser,
+  getTPAs,
+  getHospitals,
+  getInsuranceAgencies,
 };
