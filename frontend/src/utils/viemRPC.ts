@@ -13,6 +13,9 @@ import {
   contractAddressesSign,
   abi,
   contractAddresses,
+  worldCoinAddress,
+  worldCoinAbi,
+
 } from "../contract_ref";
 
 const getViewChain = (provider: IProvider) => {
@@ -500,6 +503,48 @@ const isFullyVerified = async (provider: IProvider, rid: string, publicAddress: 
 }
 
 
+const verifyAndExecuteWorldCoin = async (provider: IProvider, signal: string, root: string, nullifierHash: string, proof: any[], publicAddress: string[]) => {
+  console.log("public Address: ", publicAddress[0])
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+    console.log(publicAddress[0]);
+    const chainId = await getChainId(provider);
+    console.log(chainId);
+    // @ts-ignore
+    console.log(contractAddressesSign[chainId]);
+  
+    let hash = await walletClient.writeContract({
+      abi: worldCoinAbi,
+      // @ts-ignore
+      address: `${worldCoinAddress[chainId]}`,
+      functionName: "verifyAndExecute",
+      args: [
+        signal,
+        root, 
+        nullifierHash, 
+        proof
+      ],
+    });
+    await publicClient.waitForTransactionReceipt({ hash });
+    return "success";
+  } catch (error) {
+    console.log("Something went wrong");
+    console.log(error);
+    return "error";
+  }
+};
+
+
 export default {
   getChainId,
   getAccounts,
@@ -517,4 +562,5 @@ export default {
   verifyHospitalPublicIp,
   verifyTpaPublicIp,
   isFullyVerified,
+  verifyAndExecuteWorldCoin,
 };

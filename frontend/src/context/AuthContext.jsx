@@ -239,6 +239,15 @@ export function AuthProvider({ children }) {
     const res = await RPC.isFullyVerified(provider, rid, publicAddress);
     console.log(res);
   }
+
+  const verifyAndExecuteWorldCoin = async (signal, root, nullifierHash, proof) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const res = await RPC.verifyAndExecuteWorldCoin(provider, signal, root, nullifierHash, proof, publicAddress);
+    console.log(res);
+  }
   return (
     <AuthContext.Provider
       value={{
@@ -263,6 +272,7 @@ export function AuthProvider({ children }) {
         verifyHospitalPublicIp,
         verifyTpaPublicIp,
         isFullyVerified,
+        verifyAndExecuteWorldCoin,
       }}
     >
       {children}
