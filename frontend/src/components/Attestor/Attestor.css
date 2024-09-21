@@ -1,0 +1,50 @@
+/* ExpandableList.css */
+
+.expandable-list {
+    max-width: 600px;
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
+  }
+  
+  .list-item {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .list-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  .list-item-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .list-item-header button {
+    padding: 8px 16px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .list-item-header button:hover {
+    background-color: #0056b3;
+  }
+  
+  .list-item-content {
+    padding: 20px;
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+  }
+  

@@ -211,11 +211,12 @@ export function AuthProvider({ children }) {
     return finalpartyaddresses;
   };
 
-  const getTpaReimbursements = async () => {
+  const getTpaReimbursements = async (publicAddress) => {
     if (!provider) {
       console.log("provider not initialized yet");
       return;
     }
+    console.log("In tpa - ", publicAddress);
     const reimbursements = await RPC.getTpaReimbursements(
       provider,
       publicAddress
