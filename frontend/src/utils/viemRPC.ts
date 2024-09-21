@@ -374,6 +374,131 @@ const getInsuranceAgencies = async (provider: IProvider) => {
   }
 };
 
+const verifyInsurancePublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+
+    const chainId = await getChainId(provider);
+    // @ts-ignore
+    console.log("contract address: ", contractAddressesSign[chainId]);
+
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "verifyInsurancePublicIp",
+      args: [rid, status],
+    });
+    console.log(hash);
+    await publicClient.waitForTransactionReceipt({ hash });
+  } catch (error) {
+    console.log("error: verifyInsurancePublicIp");
+    console.log(error);
+  }
+}
+
+const verifyHospitalPublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+
+    const chainId = await getChainId(provider);
+    // @ts-ignore
+    console.log("contract address: ", contractAddressesSign[chainId]);
+
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "verifyHospitalPublicIp",
+      args: [rid, status],
+    });
+    console.log(hash);
+    await publicClient.waitForTransactionReceipt({ hash });
+  } catch (error) {
+    console.log("error: verifyHospitalPublicIp");
+    console.log(error);
+  }
+}
+
+const verifyTpaPublicIp = async (provider: IProvider, rid: string, status: boolean, publicAddress: string[]) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = await createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+
+    const walletClient = await createWalletClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+      // @ts-ignore
+      account: `${publicAddress[0]}`,
+    });
+
+    const chainId = await getChainId(provider);
+    // @ts-ignore
+    console.log("contract address: ", contractAddressesSign[chainId]);
+
+    let hash = await walletClient.writeContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "verifyTpaPublicIp",
+      args: [rid, status],
+    });
+    console.log(hash);
+    await publicClient.waitForTransactionReceipt({ hash });
+  } catch (error) {
+    console.log("error: verifyTpaPublicIp");
+    console.log(error);
+  }
+}
+
+const isFullyVerified = async (provider: IProvider, rid: string, publicAddress: string[]) => {
+  console.log("public address: ", publicAddress[0]);
+  try {
+    const publicClient = createPublicClient({
+      chain: getViewChain(provider),
+      transport: custom(provider),
+    });
+    const chainId = await getChainId(provider);
+    let isVerified = await publicClient.readContract({
+      abi: signabi,
+      // @ts-ignore
+      address: `${contractAddressesSign[chainId]}`,
+      functionName: "isFullyVerified",
+      args: [rid],
+    });
+
+    return isVerified;
+  } catch (error) {
+    console.log("error: isFullyVerified");
+    console.log(error);
+  }
+}
+
 
 export default {
   getChainId,
@@ -387,5 +512,9 @@ export default {
   getTPAs,
   getHospitals,
   getInsuranceAgencies,
-  linkWorldCoinId
+  linkWorldCoinId,
+  verifyInsurancePublicIp,
+  verifyHospitalPublicIp,
+  verifyTpaPublicIp,
+  isFullyVerified,
 };

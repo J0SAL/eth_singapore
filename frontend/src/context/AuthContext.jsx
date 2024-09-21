@@ -208,6 +208,37 @@ export function AuthProvider({ children }) {
     }
     await RPC.createReimbursementRequestByUser(provider, tpaPublic, insurancePublic, hospitalPublic, rid, docHash, claimData, claimAmount, publicAddress);
   }
+
+  const verifyInsurancePublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyInsurancePublicIp(provider, rid, status, publicAddress);
+  }
+  const verifyHospitalPublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyHospitalPublicIp(provider, rid, status, publicAddress);
+  }
+  const verifyTpaPublicIp = async (rid, status) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    await RPC.verifyTpaPublicIp(provider, rid, status, publicAddress);
+  }
+
+  const isFullyVerified = async (rid) => {
+    if (!provider) {
+      console.log("provider not initialized yet");
+      return;
+    }
+    const res = await RPC.isFullyVerified(provider, rid, publicAddress);
+    console.log(res);
+  }
   return (
     <AuthContext.Provider
       value={{
@@ -228,6 +259,10 @@ export function AuthProvider({ children }) {
         getHospitals,
         getInsuranceAgencies,
         linkWorldCoinId,
+        verifyInsurancePublicIp,
+        verifyHospitalPublicIp,
+        verifyTpaPublicIp,
+        isFullyVerified,
       }}
     >
       {children}
