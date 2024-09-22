@@ -3,6 +3,7 @@ import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 import { useAuth } from "../../context/AuthContext";
 import { useCallback, useEffect } from "react";
 import axios from "axios";
+import { Button } from "react-bootstrap";
 
 export function WorldCoinWidget() {
   const { setIsWorldIdVerified, linkWorldCoinId } = useAuth();
@@ -43,7 +44,15 @@ export function WorldCoinWidget() {
       >
         {({ open }) => (
           // This is the button that will open the IDKit modal
-          <button onClick={open}>Verify with World ID</button>
+          <Button
+            color="primary"
+            size="large"
+            onClick={open}
+            className="cta-button"
+            style={{ marginTop: "40px", background: "purple" }}
+          >
+            Verify with World ID
+          </Button>
         )}
       </IDKitWidget>
     </div>

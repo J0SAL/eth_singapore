@@ -3,6 +3,9 @@ import "../HomePage/HomePage.css";
 import { useAuth } from "../../context/AuthContext";
 import { WorldCoinWidget } from "../WorldCoinWidget/WorldCoinWidget";
 import { useNavigate } from "react-router-dom";
+import { PAGE_LOGO, PAGE_TITLE } from "../../utils/constants";
+import { Grid, Typography } from "@mui/material";
+import { Button, Image } from "react-bootstrap";
 
 export default function Home() {
     const { login, loggedIn, isWorldIdVerified } =
@@ -22,41 +25,105 @@ export default function Home() {
         if (loggedIn && isWorldIdVerified) {
             return (
                 <>
-                    <h1>Welcome to My Website</h1>
-                    <p>Discover amazing content and engage with our community.</p>
-                    <button className="login-button" onClick={handleDashboardClick}>
-                        Create Reimbursement request
-                    </button>
-                    <br />
-                    <img
-                        src="https://via.placeholder.com/400"
-                        alt="Homepage Banner"
-                        className="homepage-image"
-                    />
+                    <Grid container spacing={3} alignItems="center" justifyContent="center">
+                        <Grid item xs={12} md={6} className="image-content">
+                            <Image
+                                src="/login_banner.png"
+                                alt="Reimbursement Process"
+                                fluid
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} className="text-content">
+                            <Typography variant="h2" component="h1" gutterBottom>
+                                {PAGE_TITLE}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Submit your claims in just a few clicks, with real-time status updates.
+                            </Typography>
+                            <Typography variant="body2" gutterBottom>
+                                Our platform offers a simple, fast, and secure way to submit and track your reimbursement claims.
+                                Whether it's for health insurance, accident claims, or any medical expense, we ensure a seamless
+                                experience from start to finish.
+                            </Typography>
+                            <Button
+                                color="primary"
+                                size="large"
+                                onClick={handleDashboardClick}
+                                className="cta-button"
+                                style={{ marginTop: "40px", background: "purple" }}
+                            >
+                                Create Reimbursement Request
+                            </Button>
+                        </Grid>
+
+                    </Grid>
                 </>
+
             );
         } else if (loggedIn && !isWorldIdVerified) {
             return (
                 <>
-                    <h1>Welcome to My Website</h1>
-                    <p>Discover amazing content and engage with our community.</p>
-                    <WorldCoinWidget />
+                    <Grid container spacing={3} alignItems="center" justifyContent="center">
+                        <Grid item xs={12} md={6} className="image-content">
+                            <Image
+                                src="/login_banner.png"
+                                alt="Reimbursement Process"
+                                fluid
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} className="text-content">
+                            <Typography variant="h2" component="h1" gutterBottom>
+                                {PAGE_TITLE}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Submit your claims in just a few clicks, with real-time status updates.
+                            </Typography>
+                            <Typography variant="body2" gutterBottom>
+                                Our platform offers a simple, fast, and secure way to submit and track your reimbursement claims.
+                                Whether it's for health insurance, accident claims, or any medical expense, we ensure a seamless
+                                experience from start to finish.
+                            </Typography>
+                            <WorldCoinWidget />
+                        </Grid>
+
+                    </Grid>
                 </>
             );
         } else {
             return (
                 <>
-                    <h1>Welcome to My Website</h1>
-                    <p>Discover amazing content and engage with our community.</p>
-                    <button className="login-button" onClick={handleLogin}>
-                        Login
-                    </button>
-                    <br />
-                    <img
-                        src="https://via.placeholder.com/400"
-                        alt="Homepage Banner"
-                        className="homepage-image"
-                    />
+                    <Grid container spacing={3} alignItems="center" justifyContent="center">
+                        <Grid item xs={12} md={6} className="image-content">
+                            <Image
+                                src="/login_banner.png"
+                                alt="Reimbursement Process"
+                                fluid
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={6} className="text-content">
+                            <Typography variant="h2" component="h1" gutterBottom>
+                                {PAGE_TITLE}
+                            </Typography>
+                            <Typography variant="body1" gutterBottom>
+                                Submit your claims in just a few clicks, with real-time status updates.
+                            </Typography>
+                            <Typography variant="body2" gutterBottom>
+                                Our platform offers a simple, fast, and secure way to submit and track your reimbursement claims.
+                                Whether it's for health insurance, accident claims, or any medical expense, we ensure a seamless
+                                experience from start to finish.
+                            </Typography>
+                            <Button
+                                color="primary"
+                                size="large"
+                                onClick={handleLogin}
+                                className="cta-button"
+                                style={{ marginTop: "40px", background: "purple" }}
+                            >
+                                Login
+                            </Button>
+                        </Grid>
+
+                    </Grid>
                 </>
             );
         }
